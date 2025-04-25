@@ -5,6 +5,7 @@ import { Bill, BillDocument } from '../models/bill.model';
 import { Client } from '../models/client.model';
 import { purchaseOrderService } from '.';
 import { QueryOptions } from '../types/common';
+import mongoose from "mongoose";
 
 export const createBill = async (req: Request): Promise<BillDocument> => {
     const { clientId, purchaseOrder: poId, billAmount, ...rest } = req.body;
@@ -50,7 +51,14 @@ export const queryBills = async (
 
     return Bill.paginate(newFilter, {
         ...options,
-        populate: ['attachments', 'purchaseOrder', 'category', 'purchaseOrder.vendor'],
+        populate: [
+            'attachments',
+            { path: 'category', model: 'ExpenseCategory' },
+            {
+                path: 'purchaseOrder',
+                populate: { path: 'vendor', model: 'Vendor' }
+            }
+        ]
     });
 };
 
@@ -63,7 +71,7 @@ export const getBillById = async (
             populate: { path: 'vendor', model: 'Vendor' },
         })
         .populate('attachments')
-        .populate('category');
+        .populate({path: 'category', model: 'ExpenseCategory'});
 };
 
 export const updateBill = async (
@@ -111,4 +119,33 @@ export const deleteBill = async (billId: string): Promise<BillDocument> => {
     await purchaseOrderService.updatePurchaseOrderStatus(bill.purchaseOrder.toString());
 
     return bill;
+};
+
+export const calculateRemainingAmount = async (billId: string): Promise<{ billId: string; remainingAmount: number; status: 'paid' | 'unpaid' }> => {
+    const bill = await Bill.findById(billId);
+    if (!bill) throw new ApiError(httpStatus.NOT_FOUND, 'Bill not found');
+
+    return {
+        billId: bill.id.toString(),
+        remainingAmount: bill.remainingAmount,
+        status: bill.remainingAmount <= 0 ? 'paid' : 'unpaid',
+    };
+};
+
+export const appendPaymentToBill = async (
+    billId: string,
+    paymentId: string,
+    newRemainingAmount: number,
+    status: 'paid' | 'unpaid'
+): Promise<void> => {
+    const bill = await Bill.findById(billId);
+    if (!bill) throw new ApiError(httpStatus.NOT_FOUND, 'Bill not found');
+
+    bill.remainingAmount = newRemainingAmount;
+    bill.status = status;
+    bill.payments = bill.payments || [];
+    bill.payments.push(new mongoose.Types.ObjectId(paymentId));
+    await bill.save();
+
+    await purchaseOrderService.updatePurchaseOrderStatus(bill.purchaseOrder.toString());
 };

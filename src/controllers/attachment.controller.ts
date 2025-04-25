@@ -1,11 +1,11 @@
 import httpStatus from 'http-status';
 import catchAsync from '../utils/catchAsync';
 import { Request, Response } from 'express';
-import { saveAttachments, deleteAttachments } from '../services/attachment.service';
+import { saveAttachmentsFromRequest, deleteAttachments } from '../services/attachment.service';
 
 export const uploadAttachments = catchAsync(
     async (req: Request, res: Response) => {
-        const attachments = await saveAttachments(req);
+        const attachments = await saveAttachmentsFromRequest(req);
         res.status(httpStatus.CREATED).send({ attachments });
     }
 );

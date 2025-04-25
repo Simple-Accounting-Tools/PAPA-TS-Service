@@ -13,7 +13,10 @@ export interface BillAttributes {
     payments?: Types.ObjectId[];
 }
 
-export interface BillDocument extends BillAttributes, Document {}
+export interface BillDocument extends BillAttributes, Document {
+    createdAt: Date;
+    updatedAt: Date;
+}
 
 const billSchema = new Schema<BillDocument>(
     {
@@ -23,7 +26,7 @@ const billSchema = new Schema<BillDocument>(
         remainingAmount: { type: Number, required: true },
         dueDate: { type: Date, required: true },
         status: { type: String, enum: ['unpaid', 'paid', 'partially-paid'], default: 'unpaid' },
-        category: { type: Schema.Types.ObjectId, ref: 'Category' },
+        category: { type: Schema.Types.ObjectId, ref: 'ExpenseCategory' },
         attachments: [{ type: Schema.Types.ObjectId, ref: 'Attachment' }],
         payments: [{ type: Schema.Types.ObjectId, ref: 'Payment' }],
     },

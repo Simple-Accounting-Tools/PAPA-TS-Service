@@ -31,10 +31,20 @@ export const queryProducts = async (
     filter: QueryProductsFilter,
     options: QueryOptions
 ): Promise<any> => {
-    const newFilter = {
-        ...filter,
-        name: filter.name ? { $regex: new RegExp(filter.name, 'i') } : undefined,
-    };
+    // Destructure name out so that if it's undefined we don't include it
+    const { name, clientId, vendorId } = filter;
+    const newFilter: Record<string, any> = {};
+
+    if (name) {
+        newFilter.name = { $regex: new RegExp(name, 'i') };
+    }
+    if (clientId) {
+        newFilter.clientId = clientId;
+    }
+    if (vendorId) {
+        newFilter.vendorId = vendorId;
+    }
+
     return Product.paginate(newFilter, options);
 };
 

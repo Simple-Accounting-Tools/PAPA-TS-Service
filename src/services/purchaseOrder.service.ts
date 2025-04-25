@@ -8,7 +8,7 @@ import { Product } from '../models/product.model';
 import { Vendor } from '../models/vendor.model';
 import { Client } from '../models/client.model';
 import { Bill } from '../models/bill.model';
-import { saveAttachments, deleteAttachments } from './attachment.service';
+import { saveAttachmentsFromRequest, deleteAttachments } from './attachment.service';
 import {
     CreatePurchaseOrderInput,
     UpdatePurchaseOrderInput,
@@ -56,7 +56,7 @@ export const createPurchaseOrder = async (
         );
     }
 
-    const attachments = await saveAttachments(req);
+    const attachments = await saveAttachmentsFromRequest(req);
     const shippingCost = parseFloat(req.body.shippingCost as any) || 0;
     const tax = parseFloat(req.body.tax as any) || 0;
 
@@ -80,15 +80,58 @@ export const queryPurchaseOrders = async (
     filter: QueryPurchaseOrdersFilter,
     options: QueryOptions
 ): Promise<any> => {
-    return PurchaseOrder.paginate(filter, {
+    const paginatedResult = await PurchaseOrder.paginate(filter, {
         ...options,
-        populate: ['vendor', 'createdBy', 'attachments', 'items.product'],
+        populate: [
+            { path: 'vendor', select: '_id' },
+            { path: 'createdBy', select: '_id' },
+            { path: 'attachments', select: '_id' },
+            {
+                path: 'items.product',
+                select: '_id name description vendorId clientId createdAt updatedAt __v',
+            },
+        ],
     });
+
+    const docs = paginatedResult.docs.map((po: any) => ({
+        _id: po._id,
+        vendorId: po.vendor?._id ?? po.vendor,
+        clientId: po.clientId,
+        poNumber: po.poNumber,
+        totalAmount: po.totalAmount,
+        totalBilled: po.totalBilled,
+        status: po.status,
+        createdBy: po.createdBy?._id ?? po.createdBy ?? null,
+        attachments: (po.attachments || []).map((att: any) => att._id),
+        shippingCost: po.shippingCost,
+        tax: po.tax,
+        createdAt: po.createdAt,
+        updatedAt: po.updatedAt,
+        items: po.items.map((item: any) => ({
+            _id: item._id,
+            product: item.product?._id ?? item.product,
+            description: item.description,
+            quantity: item.quantity,
+            rate: item.rate,
+            amount: item.amount,
+        })),
+    }));
+
+    return {
+        docs,
+        page: paginatedResult.page,
+        limit: paginatedResult.limit,
+        totalPages: paginatedResult.totalPages,
+        totalResults: paginatedResult.totalDocs,
+    };
 };
+
+
 
 export const getPurchaseOrderById = async (
     purchaseOrderId: string
 ): Promise<PurchaseOrderDocument | null> => {
+    console.log(purchaseOrderId)
     return PurchaseOrder.findById(purchaseOrderId)
         .populate('vendor', 'name contact')
         .populate('items.product')
@@ -127,7 +170,7 @@ export const updatePurchaseOrder = async (
     }
 
     // Add new attachments
-    const newAttachments: AttachmentDocument[] = await saveAttachments(req);
+    const newAttachments: AttachmentDocument[] = await saveAttachmentsFromRequest(req);
     po.attachments = [
         ...(po.attachments ?? []),
         ...newAttachments.map((att: AttachmentDocument) => att._id as Types.ObjectId),

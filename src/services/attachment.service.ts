@@ -5,8 +5,12 @@ import ApiError from '../utils/ApiError';
 import { Request } from 'express';
 import { Attachment, AttachmentDocument } from '../models/attachment.model';
 
-export const saveAttachments = async (req: Request): Promise<AttachmentDocument[]> => {
+export const saveAttachmentsFromRequest = async (req: Request): Promise<AttachmentDocument[]> => {
     const files = (req as any).files as Express.Multer.File[];
+    return await saveAttachments(files);
+};
+
+export const saveAttachments = async (files: Express.Multer.File[]): Promise<AttachmentDocument[]> => {
     if (!files || files.length === 0) return [];
 
     const baseURL =

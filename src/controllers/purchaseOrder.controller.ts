@@ -37,6 +37,7 @@ export const getPurchaseOrders = catchAsync(
 
 export const getPurchaseOrderById = catchAsync(
     async (req: Request, res: Response) => {
+        console.log(req.params);
         const { purchaseOrderId } = req.params;
         const purchaseOrder = await purchaseOrderService.getPurchaseOrderById(
             purchaseOrderId
