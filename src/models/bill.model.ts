@@ -3,6 +3,7 @@ import mongoosePaginate from 'mongoose-paginate-v2';
 
 export interface BillAttributes {
     purchaseOrder: Types.ObjectId;
+    billNumber?: string;
     clientId: Types.ObjectId;
     billAmount: number;
     remainingAmount: number;
@@ -20,6 +21,7 @@ export interface BillDocument extends BillAttributes, Document {
 
 const billSchema = new Schema<BillDocument>(
     {
+        billNumber: { type: String, unique: true },
         purchaseOrder: { type: Schema.Types.ObjectId, ref: 'PurchaseOrder', required: true },
         clientId: { type: Schema.Types.ObjectId, ref: 'Client', required: true },
         billAmount: { type: Number, required: true },

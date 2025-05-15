@@ -39,6 +39,7 @@ export interface CreatePurchaseOrderInput {
     clientId: string;
     shippingCost?: number;
     tax?: number;
+    attachments?: string[];
 }
 
 export interface UpdatePurchaseOrderInput

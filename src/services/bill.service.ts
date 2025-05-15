@@ -12,12 +12,17 @@ export const createBill = async (req: Request): Promise<BillDocument> => {
 
     // 1. Validate client exists
     const client = await Client.findById(clientId);
+
     if (!client) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Client not found');
     }
 
     // 2. Validate PO exists (but do NOT modify it here)
-    await purchaseOrderService.getPurchaseOrderById(poId);
+    const purchaseOrder = await purchaseOrderService.getPurchaseOrderById(poId);
+
+    if (!purchaseOrder) {
+        throw new ApiError(httpStatus.NOT_FOUND, 'Purchase order not found');
+    }
 
     // 3. Create the Bill record
     const billData: Partial<BillDocument> = {
@@ -25,6 +30,7 @@ export const createBill = async (req: Request): Promise<BillDocument> => {
         clientId,
         billAmount: parseFloat(billAmount),
         remainingAmount: parseFloat(billAmount),
+        vendor: purchaseOrder.vendor, // 🔹 Set vendor directly from PO
         ...rest,
     };
     const bill = await Bill.create(billData);
@@ -39,7 +45,11 @@ export const queryBills = async (
     filter: Record<string, any>,
     options: QueryOptions
 ): Promise<any> => {
-    const { minAmount, maxAmount, vendorId, ...newFilter } = filter;
+    let { minAmount, maxAmount, vendorId, status, ...newFilter } = filter;
+
+    if (typeof status === "string" && status.includes(",")) {
+        status = status.split(",");
+    }
 
     if (minAmount && maxAmount) {
         newFilter.billAmount = { $gte: minAmount, $lte: maxAmount };
@@ -48,6 +58,13 @@ export const queryBills = async (
     } else if (maxAmount) {
         newFilter.billAmount = { $lte: maxAmount };
     }
+
+    if (Array.isArray(status)) {
+        newFilter.status = { $in: status };
+    } else if (status) {
+        newFilter.status = status;
+    }
+
 
     return Bill.paginate(newFilter, {
         ...options,
@@ -149,3 +166,4 @@ export const appendPaymentToBill = async (
 
     await purchaseOrderService.updatePurchaseOrderStatus(bill.purchaseOrder.toString());
 };
+

@@ -22,8 +22,9 @@ export const createPurchaseOrder = async (
     req: Request
 ): Promise<PurchaseOrderDocument> => {
     const body = req.body as CreatePurchaseOrderInput;
-
+    console.log(body);
     const client = await Client.findById(body.clientId);
+
     if (!client) {
         throw new ApiError(httpStatus.NOT_FOUND, 'Client not found');
     }
@@ -94,7 +95,7 @@ export const queryPurchaseOrders = async (
     });
 
     const docs = paginatedResult.docs.map((po: any) => ({
-        _id: po._id,
+        id: po._id,
         vendorId: po.vendor?._id ?? po.vendor,
         clientId: po.clientId,
         poNumber: po.poNumber,
@@ -125,8 +126,6 @@ export const queryPurchaseOrders = async (
         totalResults: paginatedResult.totalDocs,
     };
 };
-
-
 
 export const getPurchaseOrderById = async (
     purchaseOrderId: string

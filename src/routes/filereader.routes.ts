@@ -6,6 +6,6 @@ const router = Router();
 const upload = multer();
 
 // POST /extract - uploads a single PDF file for extraction
-router.post('/extract', upload.single('file'), pdfExtract);
+router.post('/extract', pdfExtract);
 
 export default router;
