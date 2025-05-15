@@ -1,0 +1,21 @@
+import * as attachmentService from './attachment.service';
+import * as billService from './bill.service';
+import * as clientService from './client.service';
+import * as expenseCategoryService from './expenseCategory.service';
+import * as filereaderService from './filereader.service';
+import * as paymentService from './payment.service';
+import * as productService from './product.service';
+import * as purchaseOrderService from './purchaseOrder.service';
+import * as userService from './user.service';
+import * as vendorService from './vendor.service';
+
+export { attachmentService };
+export { billService };
+export { clientService };
+export { expenseCategoryService };
+export { filereaderService };
+export { paymentService };
+export { productService };
+export { purchaseOrderService };
+export { userService };
+export { vendorService };

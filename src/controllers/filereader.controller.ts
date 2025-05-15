@@ -4,17 +4,20 @@ import FormData from "form-data";
 
 export const pdfExtract = async (req: Request, res: Response): Promise<void> => {
     try {
-        const file = req.file;
+        const files = req.files as Express.Multer.File[];
 
-        if (!file) {
-            res.status(400).json({ error: "No file uploaded" });
+        if (!files || files.length === 0) {
+            res.status(400).json({ message: 'No file uploaded' });
             return;
         }
 
+        const file = files[0];
+        console.log("File received:", file);
         const form = new FormData();
+
         form.append('file', file.buffer, {
             filename: file.originalname,
-            contentType: 'application/pdf'
+            contentType: file.mimetype, // safer to use the detected mimetype
         });
 
         const response = await axios.post(
@@ -25,8 +28,10 @@ export const pdfExtract = async (req: Request, res: Response): Promise<void> => 
                     ...form.getHeaders(),
                     'Accept': '*/*',
                     'Accept-Encoding': 'gzip, deflate, br',
-                    'Connection': 'keep-alive'
-                }
+                    'Connection': 'keep-alive',
+                },
+                maxBodyLength: Infinity,       // <-- Important for streams
+                maxContentLength: Infinity,    // <-- Important for streams
             }
         );
 
