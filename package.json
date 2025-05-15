@@ -6,7 +6,7 @@
     "dev": "nodemon src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "test": "jest --watchAll --detectOpenHandles --forceExit"
+    "test": "jest --ci"
   },
   "keywords": [],
   "author": "",
