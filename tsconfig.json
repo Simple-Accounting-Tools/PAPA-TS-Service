@@ -6,7 +6,7 @@
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "include": ["src"],
-    "exclude": ["tests", "jest.config.ts"]
-  }
+  },
+  "include": ["src"],
+  "exclude": ["tests", "jest.config.ts"]
 }
