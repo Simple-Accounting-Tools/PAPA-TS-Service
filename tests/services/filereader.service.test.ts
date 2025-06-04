@@ -28,8 +28,6 @@ describe('extractPdf', () => {
     mockedAxiosPost.mockResolvedValue({ data: mockResult });
 
     const result = await extractPdf(dummyBuffer, dummyFilename);
-    // output the mocked axios post call headers
-    console.log('mockedAxiosPost', mockedAxiosPost.mock.calls[0][2]);
     expect(result).toEqual(mockResult);
     expect(mockedAxiosPost).toHaveBeenCalledWith(
         'http://mock-filereader/extract',
