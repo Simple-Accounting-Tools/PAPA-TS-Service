@@ -46,8 +46,16 @@ export const deleteAttachments = async (deletedFiles: string[]): Promise<void> =
         const att = await Attachment.findById(id);
         if (!att) continue;
 
-        const filePath = path.join(uploadsDir, att.path);
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+        // att.path is stored with a leading `/uploads/` prefix. Joining this
+        // directly with the uploadsDir would ignore uploadsDir because the path
+        // is absolute. We strip the prefix so that the correct file system path
+        // is constructed under the uploads directory.
+        const relativePath = att.path.replace(/^\/?uploads\//, '');
+        const filePath = path.join(uploadsDir, relativePath);
+
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
 
         await att.deleteOne();
     }
