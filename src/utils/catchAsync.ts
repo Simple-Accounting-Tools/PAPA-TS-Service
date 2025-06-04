@@ -14,4 +14,4 @@ const catchAsync = (fn: AsyncHandler): AsyncHandler => {
 
 export default catchAsync;
 
-// Usage in a route handler
+// Example: router.get('/users', catchAsync(async (req, res) => { /* ... */ }));
