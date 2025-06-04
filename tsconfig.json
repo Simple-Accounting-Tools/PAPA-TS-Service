@@ -10,7 +10,7 @@
     "strict": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["node", "jest"]
+    "types": ["node", "jest", "swagger-jsdoc"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "tests", "jest.config.ts"]
