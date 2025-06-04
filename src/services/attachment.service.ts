@@ -15,7 +15,7 @@ export const saveAttachments = async (files: Express.Multer.File[]): Promise<Att
 
     const baseURL =
         process.env.NODE_ENV === 'production'
-            ? process.env.PRO_BASE_URL
+            ? process.env.PROD_BASE_URL
             : process.env.LOCAL_BASE_URL;
 
     const created = await Promise.all(
