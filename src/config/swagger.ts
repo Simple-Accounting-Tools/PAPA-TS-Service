@@ -9,6 +9,9 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
+        url: 'https://papa-ts-service-production.up.railway.app/',
+      },
+      {
         url: 'http://localhost:5000',
       },
     ],
