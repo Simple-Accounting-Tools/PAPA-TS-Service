@@ -7,6 +7,7 @@ import * as paymentService from './payment.service';
 import * as productService from './product.service';
 import * as purchaseOrderService from './purchaseOrder.service';
 import * as userService from './user.service';
+import * as profileService from './profile.service';
 import * as vendorService from './vendor.service';
 
 export { attachmentService };
@@ -18,4 +19,5 @@ export { paymentService };
 export { productService };
 export { purchaseOrderService };
 export { userService };
+export { profileService };
 export { vendorService };
