@@ -6,6 +6,7 @@ import { Payment } from "./payment.model";
 import { Product } from "./product.model";
 import { PurchaseOrder } from "./purchaseOrder.model";
 import { User } from "./user.model";
+import { Profile } from "./profile.model";
 import { Vendor } from "./vendor.model";
 
 export { Attachment };
@@ -16,4 +17,5 @@ export { Payment };
 export { Product };
 export { PurchaseOrder };
 export { User };
+export { Profile };
 export { Vendor };

@@ -14,6 +14,7 @@ import clientRoutes from "./routes/client.routes";
 import productRoutes from "./routes/product.routes";
 import purchaseOrderRoutes from "./routes/purchaseOrder.routes";
 import paymentRoutes from "./routes/payment.routes";
+import profileRoutes from "./routes/profile.routes";
 import { prepareBodyForApi } from "./utils/formDataHandler";
 
 dotenv.config();
@@ -71,6 +72,7 @@ app.use("/api/payment", paymentRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/purchaseOrder", purchaseOrderRoutes);
 app.use("/api/vendor", vendorRoutes);
+app.use("/api/profile", profileRoutes);
 
 app.get("/", (req, res) => {
     res.json({ message: "alive" });
