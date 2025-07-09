@@ -7,10 +7,26 @@ import ApiError from '../utils/ApiError';
 import { CreatePaymentInput, UpdatePaymentInput, PaymentFilter } from '../types/payment';
 
 export const createPayment = catchAsync(async (req: Request, res: Response) => {
-    const body = req.body as CreatePaymentInput;
-    const files = (req as any).files; // Cast or type properly if using multer or similar
-    const payment = await paymentService.createPayment(body, files);
+    const files = (req as any).files;
+    const rawBody = req.body as any;
 
+    if (rawBody.bills) {
+        const bills = typeof rawBody.bills === 'string' ? JSON.parse(rawBody.bills) : rawBody.bills;
+        const payments = await paymentService.createPayments(
+            {
+                bills,
+                paymentMethod: rawBody.paymentMethod,
+                clientId: rawBody.clientId,
+                notes: rawBody.notes,
+            },
+            files
+        );
+        res.status(httpStatus.CREATED).send({ payments });
+        return;
+    }
+
+    const body = rawBody as CreatePaymentInput;
+    const payment = await paymentService.createPayment(body, files);
     res.status(httpStatus.CREATED).send({ payment });
 });
 

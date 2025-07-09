@@ -4,7 +4,7 @@ import { Payment, PaymentDocument } from '../models/payment.model';
 import { Bill, Client, Vendor } from '../models';
 import {saveAttachmentsFromRequest, deleteAttachments, saveAttachments} from './attachment.service';
 import { calculateRemainingAmount, appendPaymentToBill, getBillById } from './bill.service';
-import {CreatePaymentInput, UpdatePaymentInput} from "../types/payment";
+import {CreatePaymentInput, UpdatePaymentInput, CreateMultiplePaymentsInput, PaymentItem} from "../types/payment";
 // import { sendPaymentConfirmationEmail } from './email.service';
 
 const applyDiscountRule = async (billId: string, currentPaymentAmount: number): Promise<{
@@ -96,6 +96,29 @@ export const createPayment = async (
 
 
     return payment;
+};
+
+export const createPayments = async (
+    body: CreateMultiplePaymentsInput,
+    files?: Express.Multer.File[]
+): Promise<PaymentDocument[]> => {
+    const payments: PaymentDocument[] = [];
+    const billsArray: PaymentItem[] = body.bills;
+
+    for (const item of billsArray) {
+        const paymentBody: CreatePaymentInput = {
+            bill: item.bill,
+            amount: item.amount,
+            paymentMethod: body.paymentMethod,
+            clientId: body.clientId,
+            notes: body.notes,
+        };
+
+        const payment = await createPayment(paymentBody, files);
+        payments.push(payment);
+    }
+
+    return payments;
 };
 
 export const queryPayments = async (filter: any, options: any) => {
