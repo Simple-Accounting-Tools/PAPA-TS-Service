@@ -19,6 +19,17 @@ export interface CreatePaymentInput {
     attachments?: string[];
 }
 
-export interface UpdatePaymentInput extends Partial<CreatePaymentInput> {
-    deletedFiles?: string[];
+export interface PaymentItem {
+    bill: string;
+    amount: number;
 }
+
+export interface CreateMultiplePaymentsInput {
+    bills: PaymentItem[];
+    paymentMethod: string;
+    clientId: string;
+    notes?: string;
+}
+
+export interface UpdatePaymentInput extends Partial<CreatePaymentInput> {
+    deletedFiles?: string[];}

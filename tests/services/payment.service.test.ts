@@ -1,10 +1,12 @@
 import {
   createPayment,
+  createPayments,
   queryPayments,
   getPaymentById,
   updatePayment,
   deletePayment
 } from '../../src/services/payment.service';
+import * as paymentServiceModule from '../../src/services/payment.service';
 
 import { Payment, Client } from '../../src/models';
 import * as billService from '../../src/services/bill.service';
@@ -73,6 +75,25 @@ describe('createPayment', () => {
 
     await expect(createPayment({ clientId: 'c1', bill: 'b1', amount: 100, paymentMethod: 'cash' }))
         .rejects.toThrow('Payment amount cannot exceed 50');
+  });
+});
+
+describe('createPayments', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  it('creates multiple payments using createPayment', async () => {
+    const spy = jest.spyOn(paymentServiceModule, 'createPayment').mockResolvedValue({} as any);
+    const body = {
+      bills: [
+        { bill: 'b1', amount: 10 },
+        { bill: 'b2', amount: 20 }
+      ],
+      paymentMethod: 'cash',
+      clientId: 'c1'
+    };
+    await createPayments(body as any);
+    expect(spy).toHaveBeenCalledTimes(2);
+    spy.mockRestore();
   });
 });
 
