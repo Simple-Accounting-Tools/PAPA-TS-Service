@@ -8,6 +8,7 @@ import { PurchaseOrder } from "./purchaseOrder.model";
 import { User } from "./user.model";
 import { Profile } from "./profile.model";
 import { Vendor } from "./vendor.model";
+import { PaymentType } from './paymentType.model';
 
 export { Attachment };
 export { Bill };
@@ -19,3 +20,4 @@ export { PurchaseOrder };
 export { User };
 export { Profile };
 export { Vendor };
+export { PaymentType };
