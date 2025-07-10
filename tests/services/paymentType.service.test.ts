@@ -17,7 +17,7 @@ describe('createPaymentType', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('creates payment type when client exists', async () => {
-    const input = { name: 'Credit Card', lastFour: '1234', clientId: 'c1' };
+    const input = { name: 'Credit Card', details: '4111111111111234', clientId: 'c1' };
     mockFindClient.mockResolvedValue({ _id: 'c1' });
     mockCreate.mockResolvedValue({ _id: 'pt1', ...input });
 
@@ -28,7 +28,7 @@ describe('createPaymentType', () => {
 
   it('throws if client not found', async () => {
     mockFindClient.mockResolvedValue(null);
-    await expect(createPaymentType({ name: 'x', lastFour: '1111', clientId: 'bad' }))
+    await expect(createPaymentType({ name: 'x', details: '0000111122223333', clientId: 'bad' }))
       .rejects.toThrow('Client not found');
   });
 });

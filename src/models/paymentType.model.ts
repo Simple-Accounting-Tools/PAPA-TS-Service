@@ -3,7 +3,8 @@ import { paginate } from '../utils/plugins';
 
 export interface IPaymentType {
     name: string;
-    lastFour: string;
+    /** full card or account number */
+    details: string;
     clientId: mongoose.Types.ObjectId;
 }
 
@@ -16,7 +17,7 @@ export interface PaymentTypeModel<T extends Document> extends Model<T> {
 const paymentTypeSchema = new Schema<PaymentTypeDocument>(
     {
         name: { type: String, required: true, trim: true },
-        lastFour: { type: String, required: true },
+        details: { type: String, required: true },
         clientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true },
     },
     { timestamps: true }
@@ -30,7 +31,9 @@ paymentTypeSchema.set('toJSON', {
         ret.id = ret._id;
         delete ret._id;
         delete ret.__v;
-        ret.displayName = `${ret.name} ${ret.name.toLowerCase().includes('bank') ? '****' + ret.lastFour : 'ending in ' + ret.lastFour}`;
+        const lastFour = ret.details.slice(-4);
+        ret.displayName = `${ret.name} ${ret.name.toLowerCase().includes('bank') ? '****' + lastFour : 'ending in ' + lastFour}`;
+        delete ret.details;
     },
 });
 

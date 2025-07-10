@@ -3,13 +3,15 @@ import { QueryOptions } from './common';
 
 export interface PaymentTypeAttributes {
     name: string;
-    lastFour: string;
+    /** full card or account number */
+    details: string;
     clientId: Types.ObjectId;
 }
 
 export interface CreatePaymentTypeInput {
     name: string;
-    lastFour: string;
+    /** full card or account number */
+    details: string;
     clientId: string;
 }
 
