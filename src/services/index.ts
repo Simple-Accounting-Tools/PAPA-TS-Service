@@ -9,6 +9,7 @@ import * as purchaseOrderService from './purchaseOrder.service';
 import * as userService from './user.service';
 import * as profileService from './profile.service';
 import * as vendorService from './vendor.service';
+import * as paymentTypeService from './paymentType.service';
 
 export { attachmentService };
 export { billService };
@@ -21,3 +22,4 @@ export { purchaseOrderService };
 export { userService };
 export { profileService };
 export { vendorService };
+export { paymentTypeService };

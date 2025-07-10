@@ -15,6 +15,7 @@ import productRoutes from "./routes/product.routes";
 import purchaseOrderRoutes from "./routes/purchaseOrder.routes";
 import paymentRoutes from "./routes/payment.routes";
 import profileRoutes from "./routes/profile.routes";
+import paymentTypeRoutes from "./routes/paymentType.routes";
 import { prepareBodyForApi } from "./utils/formDataHandler";
 
 dotenv.config();
@@ -71,6 +72,7 @@ app.use("/api/filereader", filereaderRoutes);
 app.use("/api/payment", paymentRoutes);
 app.use("/api/product", productRoutes);
 app.use("/api/purchaseOrder", purchaseOrderRoutes);
+app.use("/api/paymentType", paymentTypeRoutes);
 app.use("/api/vendor", vendorRoutes);
 app.use("/api/profile", profileRoutes);
 
