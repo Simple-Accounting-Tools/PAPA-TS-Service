@@ -5,6 +5,7 @@ export interface IPaymentType {
     name: string;
     /** full card or account number */
     details: string;
+    type: 'credit_card' | 'debit_card' | 'bank_account';
     clientId: mongoose.Types.ObjectId;
 }
 
@@ -18,6 +19,11 @@ const paymentTypeSchema = new Schema<PaymentTypeDocument>(
     {
         name: { type: String, required: true, trim: true },
         details: { type: String, required: true },
+        type: {
+            type: String,
+            enum: ['credit_card', 'debit_card', 'bank_account'],
+            required: true,
+        },
         clientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', required: true },
     },
     { timestamps: true }
@@ -33,6 +39,7 @@ paymentTypeSchema.set('toJSON', {
         delete ret.__v;
         const lastFour = ret.details.slice(-4);
         ret.displayName = `${ret.name} ${ret.name.toLowerCase().includes('bank') ? '****' + lastFour : 'ending in ' + lastFour}`;
+        ret.endingCardNumber = lastFour;
         delete ret.details;
     },
 });

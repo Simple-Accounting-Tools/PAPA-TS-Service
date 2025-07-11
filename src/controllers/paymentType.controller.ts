@@ -13,7 +13,7 @@ export const createPaymentType = catchAsync(async (req: Request, res: Response) 
 });
 
 export const getPaymentTypes = catchAsync(async (req: Request, res: Response) => {
-    const filter = pick(req.query, ['name', 'clientId']) as QueryPaymentTypeFilter;
+    const filter = pick(req.query, ['name', 'type', 'clientId']) as QueryPaymentTypeFilter;
     const options = pick(req.query, ['sortBy', 'limit', 'page']) as QueryOptions;
     const result = await paymentTypeService.queryPaymentTypes(filter, options);
     res.send(result);
