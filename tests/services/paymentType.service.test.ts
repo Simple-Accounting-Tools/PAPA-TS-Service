@@ -55,9 +55,12 @@ describe('getPaymentTypeById', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('returns payment type if found', async () => {
-    mockFindById.mockResolvedValue({ _id: 'pt1' });
+    const toJSON = jest.fn().mockReturnValue({ id: 'pt1', endingCardNumber: '1234' });
+    mockFindById.mockResolvedValue({ toJSON });
     const result = await getPaymentTypeById('pt1');
-    expect(result).toHaveProperty('_id', 'pt1');
+    expect(toJSON).toHaveBeenCalled();
+    expect(result).toHaveProperty('id', 'pt1');
+    expect(result).toHaveProperty('endingCardNumber', '1234');
   });
 
   it('throws if not found', async () => {
