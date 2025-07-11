@@ -23,8 +23,11 @@ export const queryPaymentTypes = async (
 ) => {
     const newFilter: any = {};
     if (filter.name) newFilter.name = { $regex: new RegExp(filter.name, 'i') };
+    if (filter.type) newFilter.type = filter.type;
     if (filter.clientId) newFilter.clientId = filter.clientId;
-    return PaymentType.paginate(newFilter, options);
+    const result = await PaymentType.paginate(newFilter, options);
+    result.docs = result.docs.map((doc: PaymentTypeDocument) => doc.toJSON());
+    return result;
 };
 
 export const getPaymentTypeById = async (
@@ -32,7 +35,7 @@ export const getPaymentTypeById = async (
 ): Promise<PaymentTypeDocument> => {
     const paymentType = await PaymentType.findById(id);
     if (!paymentType) throw new ApiError(httpStatus.NOT_FOUND, 'Payment type not found');
-    return paymentType;
+    return paymentType.toJSON();
 };
 
 export const updatePaymentType = async (
