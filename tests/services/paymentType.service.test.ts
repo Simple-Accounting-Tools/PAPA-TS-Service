@@ -6,6 +6,7 @@ import {
   deletePaymentType
 } from '../../src/services/paymentType.service';
 import { PaymentType, Client } from '../../src/models';
+import { CreatePaymentTypeInput } from '../../src/types/paymentType';
 
 jest.mock('../../src/models/paymentType.model');
 jest.mock('../../src/models/client.model');
@@ -17,7 +18,7 @@ describe('createPaymentType', () => {
   beforeEach(() => jest.clearAllMocks());
 
   it('creates payment type when client exists', async () => {
-    const input = { name: 'Credit Card', details: '4111111111111234', clientId: 'c1' };
+    const input: CreatePaymentTypeInput = { name: 'Credit Card', details: '4111111111111234', type: 'credit_card', clientId: 'c1' };
     mockFindClient.mockResolvedValue({ _id: 'c1' });
     mockCreate.mockResolvedValue({ _id: 'pt1', ...input });
 
@@ -28,7 +29,7 @@ describe('createPaymentType', () => {
 
   it('throws if client not found', async () => {
     mockFindClient.mockResolvedValue(null);
-    await expect(createPaymentType({ name: 'x', details: '0000111122223333', clientId: 'bad' }))
+    await expect(createPaymentType({ name: 'x', details: '0000111122223333', type: 'credit_card', clientId: 'bad' } as CreatePaymentTypeInput))
       .rejects.toThrow('Client not found');
   });
 });
@@ -40,9 +41,9 @@ describe('queryPaymentTypes', () => {
 
   it('applies filters correctly', async () => {
     mockPaginate.mockResolvedValue({ docs: [] });
-    await queryPaymentTypes({ name: 'Credit' }, { page: 1, limit: 5 });
+    await queryPaymentTypes({ name: 'Credit', type: 'credit_card' }, { page: 1, limit: 5 });
     expect(mockPaginate).toHaveBeenCalledWith(
-      { name: { $regex: expect.any(RegExp) } },
+      { name: { $regex: expect.any(RegExp) }, type: 'credit_card' },
       expect.objectContaining({ page: 1, limit: 5 })
     );
   });
@@ -72,7 +73,7 @@ describe('updatePaymentType', () => {
 
   it('updates and saves payment type', async () => {
     const save = jest.fn();
-    const pt = { _id: 'pt1', name: 'Old', save };
+    const pt = { _id: 'pt1', name: 'Old', type: 'credit_card', save };
     mockFindById.mockResolvedValue(pt);
     const result = await updatePaymentType('pt1', { name: 'New' });
     expect(result.name).toBe('New');

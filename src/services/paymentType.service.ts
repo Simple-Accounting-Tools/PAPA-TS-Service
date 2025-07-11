@@ -23,6 +23,7 @@ export const queryPaymentTypes = async (
 ) => {
     const newFilter: any = {};
     if (filter.name) newFilter.name = { $regex: new RegExp(filter.name, 'i') };
+    if (filter.type) newFilter.type = filter.type;
     if (filter.clientId) newFilter.clientId = filter.clientId;
     return PaymentType.paginate(newFilter, options);
 };
