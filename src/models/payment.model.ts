@@ -6,7 +6,7 @@ export interface IPayment {
     amount: number;
     discount: number;
     paymentMethod: 'card' | 'bank_transfer' | 'cash' | 'check' | 'ach' | 'wire_transfer';
-    paymentType?: mongoose.Types.ObjectId;
+    paymentMethodId?: mongoose.Types.ObjectId;
     status?: 'paid' | 'unpaid';
     paymentDate?: Date;
     notes?: string;
@@ -33,7 +33,7 @@ const paymentSchema = new Schema<PaymentDocument>(
             enum: ['card', 'bank_transfer', 'cash', 'check', 'ach', 'wire_transfer'],
             required: true,
         },
-        paymentType: { type: mongoose.Schema.Types.ObjectId, ref: 'PaymentType' },
+        paymentMethodId: { type: mongoose.Schema.Types.ObjectId, ref: 'PaymentType' },
         status: { type: String, enum: ['paid', 'unpaid'], default: 'paid' },
         paymentDate: { type: Date, default: Date.now },
         notes: { type: String, trim: true },
