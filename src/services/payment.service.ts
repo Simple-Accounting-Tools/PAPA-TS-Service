@@ -110,6 +110,7 @@ export const createPayments = async (
             bill: item.bill,
             amount: item.amount,
             paymentMethod: body.paymentMethod,
+            paymentType: body.paymentType,
             clientId: body.clientId,
             notes: body.notes,
         };
@@ -126,6 +127,7 @@ export const queryPayments = async (filter: any, options: any) => {
     if (minAmount && maxAmount) newFilter.amount = { $gte: minAmount, $lte: maxAmount };
     else if (minAmount) newFilter.amount = { $gte: minAmount };
     else if (maxAmount) newFilter.amount = { $lte: maxAmount };
+    if (filter.paymentType) newFilter.paymentType = filter.paymentType;
     return Payment.paginate(newFilter, { ...options, populate: 'bill attachments' });
 };
 
