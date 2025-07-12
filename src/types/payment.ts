@@ -2,6 +2,7 @@ export interface PaymentFilter {
     bill?: string;
     status?: 'paid' | 'unpaid';
     paymentMethod?: 'card' | 'bank_transfer' | 'cash' | 'check' | 'ach' | 'wire_transfer';
+    paymentType?: string;
     clientId?: string;
     minAmount?: number;
     maxAmount?: number;
@@ -12,6 +13,7 @@ export interface CreatePaymentInput {
     amount: number;
     discount?: number;
     paymentMethod: string;
+    paymentType?: string;
     status?: string;
     paymentDate?: Date;
     notes?: string;
@@ -27,6 +29,7 @@ export interface PaymentItem {
 export interface CreateMultiplePaymentsInput {
     bills: PaymentItem[];
     paymentMethod: string;
+    paymentType?: string;
     clientId: string;
     notes?: string;
 }

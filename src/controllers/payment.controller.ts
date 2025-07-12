@@ -16,6 +16,7 @@ export const createPayment = catchAsync(async (req: Request, res: Response) => {
             {
                 bills,
                 paymentMethod: rawBody.paymentMethod,
+                paymentType: rawBody.paymentType,
                 clientId: rawBody.clientId,
                 notes: rawBody.notes,
             },
@@ -31,7 +32,7 @@ export const createPayment = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getPayments = catchAsync(async (req: Request, res: Response) => {
-    const filter = pick(req.query, ['bill', 'status', 'paymentMethod', 'clientId', 'minAmount', 'maxAmount']) as PaymentFilter;
+    const filter = pick(req.query, ['bill', 'status', 'paymentMethod', 'paymentType', 'clientId', 'minAmount', 'maxAmount']) as PaymentFilter;
     const options = pick(req.query, ['sortBy', 'limit', 'page']);
     const result = await paymentService.queryPayments(filter, options);
     res.send({ docs: result.docs, ...result });
